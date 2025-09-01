@@ -1,0 +1,6 @@
+# MAX7219 Add-on — BOM (per module)
+- 1x MAX7219 LED Driver (DIP-24)
+- 3x 7-Segment Display (Common Cathode), 1 digit each  (you can use up to 8, but we wire 3)
+- 1x Resistor (10k) from ISET pin of MAX7219 to +5V (recommended)
+- Wires for segments/digits (or use an integrated MAX7219-7SEG module if available)
+- Optional: 100nF decoupling cap near MAX7219 VDD

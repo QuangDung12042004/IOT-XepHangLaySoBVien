@@ -1,0 +1,28 @@
+# MAX7219 Add-on — Wiring (per Arduino)
+
+# Control pins to Arduino (defaults used in code)
+MAX7219 DIN  -> Arduino D11
+MAX7219 CLK  -> Arduino D13
+MAX7219 CS   -> Arduino D12
+MAX7219 VCC  -> +5V
+MAX7219 GND  -> GND
+MAX7219 ISET -> 10k resistor -> +5V
+
+# 7-Segment digits (Common Cathode) — use 3 digits
+MAX7219 DIG0 -> Digit0 Common Cathode
+MAX7219 DIG1 -> Digit1 Common Cathode
+MAX7219 DIG2 -> Digit2 Common Cathode
+(Leave DIG3..DIG7 unconnected if only 3 digits)
+
+# Segment lines (all three digits share the same segment lines)
+MAX7219 SEG A  -> segment 'a' pins of all 3 digits
+MAX7219 SEG B  -> segment 'b' pins of all 3 digits
+MAX7219 SEG C  -> segment 'c' pins of all 3 digits
+MAX7219 SEG D  -> segment 'd' pins of all 3 digits
+MAX7219 SEG E  -> segment 'e' pins of all 3 digits
+MAX7219 SEG F  -> segment 'f' pins of all 3 digits
+MAX7219 SEG G  -> segment 'g' pins of all 3 digits
+MAX7219 SEG DP -> decimal point pins of all 3 digits (optional)
+
+# Scan limit is set to 0..2 in code, so only 3 digits will be driven.
+# Dispenser shows TICKET on 7-seg; Counter shows SERVING on 7-seg.
