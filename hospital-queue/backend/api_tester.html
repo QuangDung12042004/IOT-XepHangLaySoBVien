@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Queue API Tester</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 20px; 
+            background: #f5f5f5; 
+        }
+        .container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 10px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); 
+        }
+        .section { 
+            margin: 20px 0; 
+            padding: 15px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+        }
+        .section h3 { 
+            margin-top: 0; 
+            color: #2c3e50; 
+        }
+        button { 
+            background: #3498db; 
+            color: white; 
+            border: none; 
+            padding: 10px 15px; 
+            margin: 5px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+        button:hover { 
+            background: #2980b9; 
+        }
+        .success { background: #27ae60; }
+        .danger { background: #e74c3c; }
+        .warning { background: #f39c12; }
+        
+        .result { 
+            background: #ecf0f1; 
+            padding: 10px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+            white-space: pre-wrap; 
+            font-family: monospace; 
+            max-height: 300px; 
+            overflow-y: auto; 
+        }
+        .status { 
+            display: inline-block; 
+            padding: 2px 8px; 
+            border-radius: 3px; 
+            color: white; 
+            font-size: 12px; 
+            margin-left: 10px; 
+        }
+        input[type="text"], input[type="number"] { 
+            padding: 8px; 
+            margin: 5px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Hospital Queue API Tester</h1>
+        <p><strong>Base URL:</strong> <span id="baseUrl">http://localhost:8080</span></p>
+        
+        <!-- 1. DEPARTMENTS -->
+        <div class="section">
+            <h3>📋 1. DEPARTMENTS (Quản lý Khoa)</h3>
+            <button onclick="testAPI('GET', '/api/departments', null, 'dept-result')">
+                Lấy danh sách khoa
+            </button>
+            <button onclick="testAPI('GET', '/api/departments/1', null, 'dept-result')">
+                Chi tiết khoa ID=1
+            </button>
+            <button onclick="createDepartment()">
+                Tạo khoa mới
+            </button>
+            <div class="result" id="dept-result">Kết quả sẽ hiển thị ở đây...</div>
+        </div>
+
+        <!-- 2. TICKETS -->
+        <div class="section">
+            <h3>🎫 2. TICKETS (Quản lý Xếp Hàng)</h3>
+            <button onclick="takeNumber()" class="success">
+                Lấy số thứ tự K01
+            </button>
+            <button onclick="testAPI('GET', '/api/tickets/waiting/1', null, 'ticket-result')">
+                Xem hàng đợi K01
+            </button>
+            <button onclick="testAPI('POST', '/api/tickets/call-next/1', null, 'ticket-result')" class="warning">
+                Gọi số tiếp theo K01
+            </button>
+            <button onclick="completeTicket()" class="success">
+                Hoàn tất ticket
+            </button>
+            <div>
+                <input type="number" id="ticketId" placeholder="Ticket ID" value="1">
+                <button onclick="testAPI('POST', '/api/tickets/complete/' + document.getElementById('ticketId').value, null, 'ticket-result')">
+                    Complete ticket
+                </button>
+            </div>
+            <div class="result" id="ticket-result">Kết quả sẽ hiển thị ở đây...</div>
+        </div>
+
+        <!-- 3. HARDWARE -->
+        <div class="section">
+            <h3>🔌 3. HARDWARE/IOT (Proteus/Arduino)</h3>
+            <button onclick="testAPI('GET', '/api/hardware/ping', null, 'hardware-result')" class="success">
+                Ping Test
+            </button>
+            <button onclick="testAPI('GET', '/api/hardware/next-ticket/1', null, 'hardware-result')">
+                Lấy info số tiếp theo
+            </button>
+            <button onclick="deviceCalled()">
+                Thiết bị báo đã gọi số
+            </button>
+            <button onclick="deviceStatus()">
+                Báo cáo trạng thái thiết bị
+            </button>
+            <div class="result" id="hardware-result">Kết quả sẽ hiển thị ở đây...</div>
+        </div>
+
+        <!-- 4. DASHBOARD -->
+        <div class="section">
+            <h3>📊 4. DASHBOARD (Thống kê)</h3>
+            <button onclick="testAPI('GET', '/api/dashboard/overview', null, 'dashboard-result')" class="success">
+                Tổng quan tất cả khoa
+            </button>
+            <button onclick="testAPI('GET', '/api/dashboard/department/1', null, 'dashboard-result')">
+                Thống kê chi tiết K01
+            </button>
+            <button onclick="testAPI('GET', '/api/dashboard/display/K01', null, 'dashboard-result')">
+                Dữ liệu màn hình K01
+            </button>
+            <div class="result" id="dashboard-result">Kết quả sẽ hiển thị ở đây...</div>
+        </div>
+
+        <!-- 5. SYSTEM -->
+        <div class="section">
+            <h3>⚙️ 5. SYSTEM</h3>
+            <button onclick="window.open('http://localhost:8080/swagger-ui/index.html', '_blank')">
+                Mở Swagger UI
+            </button>
+            <button onclick="testAPI('GET', '/actuator/health', null, 'system-result')">
+                Health Check
+            </button>
+            <div class="result" id="system-result">System status...</div>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = 'http://localhost:8080';
+
+        async function testAPI(method, endpoint, body, resultId) {
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.innerHTML = `🔄 Loading ${method} ${endpoint}...`;
+            
+            try {
+                const config = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+                
+                if (body) {
+                    config.body = JSON.stringify(body);
+                }
+                
+                const response = await fetch(baseUrl + endpoint, config);
+                const data = await response.json();
+                
+                const status = response.ok ? '✅ SUCCESS' : '❌ ERROR';
+                const statusClass = response.ok ? 'success' : 'danger';
+                
+                resultDiv.innerHTML = 
+                    `<div class="status ${statusClass}">${status} ${response.status}</div>\n` +
+                    `<strong>${method} ${endpoint}</strong>\n\n` +
+                    JSON.stringify(data, null, 2);
+                    
+            } catch (error) {
+                resultDiv.innerHTML = 
+                    `<div class="status danger">❌ NETWORK ERROR</div>\n` +
+                    `<strong>${method} ${endpoint}</strong>\n\n` +
+                    `Error: ${error.message}`;
+            }
+        }
+
+        // Helper functions
+        function takeNumber() {
+            const body = { departmentCode: "K01" };
+            testAPI('POST', '/api/tickets/take-number', body, 'ticket-result');
+        }
+
+        function createDepartment() {
+            const body = {
+                code: "K99",
+                name: "Khoa Test",
+                location: "Tầng Test"
+            };
+            testAPI('POST', '/api/departments', body, 'dept-result');
+        }
+
+        function deviceCalled() {
+            testAPI('POST', '/api/hardware/called/1', null, 'hardware-result');
+        }
+
+        function deviceStatus() {
+            const body = {
+                deviceId: "TEST_DEVICE_001",
+                status: "online",
+                lastPing: new Date().toISOString(),
+                message: "Test từ web interface"
+            };
+            testAPI('POST', '/api/hardware/status', body, 'hardware-result');
+        }
+
+        function completeTicket() {
+            const ticketId = prompt("Nhập Ticket ID để hoàn tất:", "1");
+            if (ticketId) {
+                testAPI('POST', `/api/tickets/complete/${ticketId}`, null, 'ticket-result');
+            }
+        }
+
+        // Auto test ping on load
+        window.onload = function() {
+            setTimeout(() => {
+                testAPI('GET', '/api/hardware/ping', null, 'hardware-result');
+            }, 1000);
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+body { background: #f7f9fc; }
+.card { border: none; }
+.card-header { background: #fff; }
+#ticketInfo { font-size: 1.1rem; }
+@media (max-width: 768px) {
+  .navbar-brand { font-size: 1rem; }
+}

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👩‍⚕️ Nhân viên - Quản lý hàng đợi</title>
+    
+    <!-- Bootstrap 5 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --success-color: #198754;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #0dcaf0;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin: 1rem;
+            overflow: hidden;
+            min-height: calc(100vh - 2rem);
+        }
+        
+        .header-section {
+            background: linear-gradient(45deg, var(--primary-color), #6610f2);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+        
+        .header-section h1 {
+            margin: 0;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 700;
+        }
+        
+        .staff-controls {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+        }
+        
+        .content-section {
+            padding: 1rem;
+        }
+        
+        .control-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e9ecef;
+            margin-bottom: 1rem;
+        }
+        
+        .queue-display {
+            background: linear-gradient(45deg, #e3f2fd, #f3e5f5);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .current-number {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 1rem 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .call-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .btn-call {
+            background: linear-gradient(45deg, var(--success-color), #20c997);
+            border: none;
+            color: white;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-call:hover {
+            background: linear-gradient(45deg, #146c43, #198754);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(25,135,84,0.4);
+        }
+        
+        .btn-complete {
+            background: linear-gradient(45deg, var(--info-color), #0ea5e9);
+            border: none;
+            color: white;
+        }
+        
+        .btn-complete:hover {
+            background: linear-gradient(45deg, #0891b2, #0dcaf0);
+        }
+        
+        .btn-skip {
+            background: linear-gradient(45deg, var(--warning-color), #f59e0b);
+            border: none;
+            color: var(--dark-bg);
+        }
+        
+        .btn-skip:hover {
+            background: linear-gradient(45deg, #d97706, #ffc107);
+        }
+        
+        .waiting-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            background: var(--light-bg);
+        }
+        
+        .ticket-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+            transition: background-color 0.3s ease;
+        }
+        
+        .ticket-item:hover {
+            background: white;
+        }
+        
+        .ticket-item:last-child {
+            border-bottom: none;
+        }
+        
+        .ticket-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .ticket-info {
+            flex-grow: 1;
+            margin-left: 1rem;
+        }
+        
+        .ticket-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .ticket-time {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        
+        .ticket-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-sm-action {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            border-radius: 5px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .stat-card {
+            background: var(--light-bg);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Mobile First Responsive Design */
+        @media (max-width: 576px) {
+            .main-container {
+                margin: 0;
+                border-radius: 0;
+                min-height: 100vh;
+            }
+            
+            .content-section {
+                padding: 0.5rem;
+            }
+            
+            .control-card {
+                padding: 1rem;
+                margin-bottom: 0.5rem;
+            }
+            
+            .call-buttons {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            
+            .current-number {
+                font-size: 4rem;
+            }
+            
+            .ticket-item {
+                padding: 0.75rem;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .ticket-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+            }
+            
+            .stat-card {
+                padding: 0.75rem;
+            }
+            
+            .stat-number {
+                font-size: 1.5rem;
+            }
+        }
+        
+        @media (min-width: 576px) and (max-width: 768px) {
+            .call-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (min-width: 768px) and (max-width: 992px) {
+            .main-container {
+                margin: 1rem 2rem;
+            }
+            
+            .call-buttons {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .main-container {
+                margin: 2rem auto;
+                max-width: 1200px;
+            }
+            
+            .content-section {
+                padding: 2rem;
+            }
+            
+            .call-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            max-width: 350px;
+        }
+        
+        .login-form {
+            max-width: 400px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header-section position-relative">
+            <a href="index.html" class="back-btn">
+                <i class="bi bi-arrow-left"></i> Quay lại
+            </a>
+            <h1><i class="bi bi-people"></i> Quản lý hàng đợi</h1>
+            <p>Dành cho nhân viên y tế</p>
+            
+            <div class="staff-controls">
+                <select class="form-select form-select-sm me-2" id="departmentSelect" style="max-width: 200px;">
+                    <option value="">Chọn khoa...</option>
+                </select>
+                <button class="btn btn-light btn-sm" id="btnRefresh">
+                    <i class="bi bi-arrow-clockwise"></i> Làm mới
+                </button>
+                <button class="btn btn-warning btn-sm" id="btnSettings">
+                    <i class="bi bi-gear"></i> Cài đặt
+                </button>
+                <button class="btn btn-danger btn-sm" id="btnLogout">
+                    <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                </button>
+            </div>
+        </div>
+        
+        <!-- Login Form (initially hidden) -->
+        <div class="login-form" id="loginForm">
+            <h4 class="text-center mb-4">
+                <i class="bi bi-person-badge"></i>
+                Đăng nhập nhân viên
+            </h4>
+            
+            <form id="staffLoginForm">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Tài khoản</label>
+                    <input type="text" class="form-control" id="username" required>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mật khẩu</label>
+                    <input type="password" class="form-control" id="password" required>
+                </div>
+                
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        Đăng nhập
+                    </button>
+                </div>
+            </form>
+            
+            <div class="mt-3">
+                <small class="text-muted">
+                    <i class="bi bi-info-circle"></i>
+                    Demo: admin/admin123 hoặc staff/staff123
+                </small>
+            </div>
+        </div>
+        
+        <!-- Main Content (initially hidden) -->
+        <div class="content-section" id="mainContent" style="display: none;">
+            
+            <!-- Current Queue Display -->
+            <div class="queue-display">
+                <h3>Số thứ tự hiện tại</h3>
+                <div class="current-number pulse" id="currentNumber">001</div>
+                <p class="mb-0" id="currentDepartment">Khoa Nội Tổng Hợp</p>
+            </div>
+            
+            <!-- Control Buttons -->
+            <div class="control-card">
+                <h5 class="mb-3">
+                    <i class="bi bi-megaphone"></i>
+                    Điều khiển gọi số
+                </h5>
+                
+                <div class="call-buttons">
+                    <button class="btn btn-call" id="btnCallNext">
+                        <i class="bi bi-skip-forward"></i>
+                        Gọi tiếp theo
+                    </button>
+                    
+                    <button class="btn btn-call btn-complete" id="btnComplete">
+                        <i class="bi bi-check-circle"></i>
+                        Hoàn thành
+                    </button>
+                    
+                    <button class="btn btn-call btn-skip" id="btnSkip">
+                        <i class="bi bi-skip-end"></i>
+                        Bỏ qua
+                    </button>
+                    
+                    <button class="btn btn-call" id="btnRecall">
+                        <i class="bi bi-arrow-repeat"></i>
+                        Gọi lại
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Statistics -->
+            <div class="control-card">
+                <h5 class="mb-3">
+                    <i class="bi bi-graph-up"></i>
+                    Thống kê hôm nay
+                </h5>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalToday">0</div>
+                        <div class="stat-label">Tổng số vé</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="completedToday">0</div>
+                        <div class="stat-label">Đã khám</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="waitingCount">0</div>
+                        <div class="stat-label">Đang chờ</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="avgTime">0</div>
+                        <div class="stat-label">TB (phút)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Waiting List -->
+            <div class="control-card">
+                <h5 class="mb-3">
+                    <i class="bi bi-list-ol"></i>
+                    Danh sách chờ
+                    <span class="badge bg-primary ms-2" id="waitingBadge">0</span>
+                </h5>
+                
+                <div class="waiting-list" id="waitingList">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Đang tải...</span>
+                        </div>
+                        <p class="mt-2">Đang tải danh sách...</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    
+    <!-- Toast Notifications -->
+    <div class="notification-toast" id="notificationToast">
+        <!-- Toasts will appear here -->
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="assets/app-staff-responsive.js"></script>
+</body>
+</html>

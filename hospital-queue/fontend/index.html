@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏥 Hệ Thống Quản Lý Hàng Đợi Bệnh Viện</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="assets/style.css" rel="stylesheet">
+    <style>
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        
+        .role-card {
+            border: none;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            height: 100%;
+            cursor: pointer;
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            text-decoration: none;
+        }
+        
+        .role-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+        }
+        
+        .role-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .patient-card {
+            border-top: 5px solid #28a745;
+        }
+        
+        .staff-card {
+            border-top: 5px solid #007bff;
+        }
+        
+        .patient-card .role-icon {
+            color: #28a745;
+        }
+        
+        .staff-card .role-icon {
+            color: #007bff;
+        }
+        
+        .stats-section {
+            background-color: #f8f9fa;
+            padding: 60px 0;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .brand-title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 50px;
+            opacity: 0.9;
+        }
+        
+        .btn-role {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            transition: all 0.3s;
+            margin-top: 20px;
+            width: 100%;
+        }
+        
+        .btn-role:hover {
+            background: linear-gradient(45deg, #5a6fd8, #6a4190);
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        .patient-card .btn-role {
+            background: linear-gradient(45deg, #28a745, #20c997);
+        }
+        
+        .patient-card .btn-role:hover {
+            background: linear-gradient(45deg, #218838, #1aa085);
+        }
+        
+        .staff-card .btn-role {
+            background: linear-gradient(45deg, #007bff, #6610f2);
+        }
+        
+        .staff-card .btn-role:hover {
+            background: linear-gradient(45deg, #0056b3, #520dc2);
+        }
+        
+        @media (max-width: 768px) {
+            .brand-title {
+                font-size: 2.5rem;
+            }
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            .role-icon {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <i class="bi bi-hospital display-1 mb-4"></i>
+                    <h1 class="brand-title">Hệ Thống Quản Lý Hàng Đợi</h1>
+                    <p class="subtitle">Bệnh Viện Đa Khoa Thông Minh</p>
+                    <p class="lead">Chọn vai trò của bạn để tiếp tục sử dụng hệ thống</p>
+                </div>
+            </div>
+            
+            <!-- Role Selection Cards -->
+            <div class="row justify-content-center mt-5">
+                <!-- Bệnh nhân - Bốc số khám -->
+                <div class="col-md-5 col-lg-4 mb-4">
+                    <a href="user-responsive.html" class="role-card patient-card d-block text-decoration-none">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-person-heart role-icon"></i>
+                            <h4 class="card-title text-dark mb-3">Bệnh Nhân</h4>
+                            <p class="card-text text-muted mb-4">
+                                Lấy số thứ tự khám bệnh<br>
+                                Theo dõi hàng đợi<br>
+                                Xem thông tin khoa
+                            </p>
+                            <button class="btn btn-role">
+                                <i class="bi bi-ticket-perforated me-2"></i>
+                                Bốc Số Khám
+                            </button>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Nhân viên -->
+                <div class="col-md-5 col-lg-4 mb-4">
+                    <a href="staff-responsive.html" class="role-card staff-card d-block text-decoration-none">
+                        <div class="card-body text-center p-4">
+                            <i class="bi bi-people role-icon"></i>
+                            <h4 class="card-title text-dark mb-3">Nhân Viên</h4>
+                            <p class="card-text text-muted mb-4">
+                                Quản lý hàng đợi<br>
+                                Gọi số thứ tự<br>
+                                Theo dõi bệnh nhân
+                            </p>
+                            <button class="btn btn-role">
+                                <i class="bi bi-gear me-2"></i>
+                                Quản Lý Hệ Thống
+                            </button>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4">
+        <div class="container">
+            <p class="mb-0">
+                <i class="bi bi-hospital me-2"></i>
+                © 2024 Hệ Thống Quản Lý Hàng Đợi Bệnh Viện. Phát triển bởi IoT Hospital Team.
+            </p>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Update stats every 30 seconds
+        function updateStats() {
+            fetch('/api/public/stats')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.totalDepartments) {
+                        document.getElementById('totalDepartments').textContent = data.totalDepartments;
+                    }
+                    if (data.totalTicketsToday) {
+                        document.getElementById('totalTicketsToday').textContent = data.totalTicketsToday;
+                    }
+                    if (data.averageWaitTime) {
+                        document.getElementById('averageWaitTime').textContent = data.averageWaitTime;
+                    }
+                    if (data.patientsWaiting) {
+                        document.getElementById('patientsWaiting').textContent = data.patientsWaiting;
+                    }
+                })
+                .catch(error => {
+                    console.log('Stats not available:', error);
+                    // Keep default values if API is not available
+                });
+        }
+        
+        // Update stats on page load and every 30 seconds
+        updateStats();
+        setInterval(updateStats, 30000);
+        
+        // Add smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

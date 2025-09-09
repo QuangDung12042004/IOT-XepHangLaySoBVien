@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎫 Lấy số thứ tự - Bệnh viện</title>
+    
+    <!-- Bootstrap 5 & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --success-color: #198754;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --info-color: #0dcaf0;
+            --light-bg: #f8f9fa;
+            --dark-bg: #212529;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .main-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin: 1rem;
+            overflow: hidden;
+        }
+        
+        .header-section {
+            background: linear-gradient(45deg, var(--primary-color), var(--success-color));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+        }
+        
+        .header-section h1 {
+            margin: 0;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: 700;
+        }
+        
+        .header-section p {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+            color: white;
+        }
+        
+        .form-section {
+            padding: 2rem 1rem;
+        }
+        
+        .form-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e9ecef;
+            margin-bottom: 2rem;
+        }
+        
+        .department-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .department-card {
+            background: var(--light-bg);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .department-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(13,110,253,0.3);
+        }
+        
+        .department-card.selected {
+            border-color: var(--success-color);
+            background: var(--success-color);
+            color: white;
+        }
+        
+        .department-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .queue-info {
+            background: linear-gradient(45deg, #e3f2fd, #f3e5f5);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+        
+        .queue-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .btn-take-number {
+            background: linear-gradient(45deg, var(--success-color), #20c997);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-take-number:hover:not(:disabled) {
+            background: linear-gradient(45deg, #146c43, #198754);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(25,135,84,0.4);
+        }
+        
+        .btn-take-number:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .ticket-result {
+            background: linear-gradient(45deg, #d4edda, #c3e6cb);
+            border: 2px solid var(--success-color);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+            display: none;
+        }
+        
+        .ticket-number {
+            font-size: 4rem;
+            font-weight: 700;
+            color: var(--success-color);
+            margin: 1rem 0;
+        }
+        
+        .waiting-status {
+            background: var(--warning-color);
+            color: var(--dark-bg);
+            padding: 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            margin: 1rem 0;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        /* Mobile First Responsive Design */
+        @media (max-width: 576px) {
+            .main-container {
+                margin: 0.5rem;
+                border-radius: 10px;
+            }
+            
+            .form-section {
+                padding: 1rem 0.5rem;
+            }
+            
+            .form-card {
+                padding: 1rem;
+            }
+            
+            .department-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            
+            .department-card {
+                padding: 1rem;
+            }
+            
+            .department-icon {
+                font-size: 1.5rem;
+            }
+            
+            .ticket-number {
+                font-size: 3rem;
+            }
+            
+            .btn-take-number {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+            }
+        }
+        
+        @media (min-width: 576px) and (max-width: 768px) {
+            .department-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 768px) and (max-width: 992px) {
+            .department-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .main-container {
+                margin: 1rem 2rem;
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .department-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .main-container {
+                margin: 2rem auto;
+                max-width: 1200px;
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .form-section {
+                padding: 3rem 2rem;
+            }
+        }
+        
+        .notification-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            max-width: 350px;
+        }
+        
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            padding: 1rem;
+            margin: 1rem 0;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header-section position-relative">
+            <a href="index.html" class="back-btn">
+                <i class="bi bi-arrow-left"></i> Quay lại
+            </a>
+            <h1><i class="bi bi-ticket-perforated"></i> Lấy số thứ tự</h1>
+            <p>Chọn khoa khám và nhập thông tin để lấy số</p>
+        </div>
+        
+        <!-- Form Section -->
+        <div class="form-section">
+            <div class="form-card">
+                <h4 class="mb-3">
+                    <i class="bi bi-hospital text-primary"></i> 
+                    Chọn khoa/phòng khám
+                </h4>
+                <!-- Dropdown menu chọn khoa -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-primary btn-lg dropdown-toggle w-100" type="button" id="departmentDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-hospital"></i> Chọn khoa/phòng khám
+                    </button>
+                    <ul class="dropdown-menu w-100" aria-labelledby="departmentDropdown" id="departmentMenu">
+                        <li><a class="dropdown-item disabled" href="#">Đang tải...</a></li>
+                    </ul>
+                </div>
+                <div class="loading-spinner" id="loadingDepartments" style="display: none;">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                    <p class="mt-2">Đang tải danh sách khoa...</p>
+                </div>
+            </div>
+            
+            <!-- Patient Info -->
+            <div class="form-card">
+                <h4 class="mb-3">
+                    <i class="bi bi-person text-info"></i> 
+                    Thông tin bệnh nhân
+                </h4>
+                
+                <div class="row g-3">
+                    <div class="col-12">
+                        <label for="patientName" class="form-label">
+                            Họ và tên <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" 
+                               class="form-control form-control-lg" 
+                               id="patientName" 
+                               placeholder="Nhập họ và tên đầy đủ"
+                               maxlength="100">
+                        <div class="form-text">
+                            <i class="bi bi-info-circle"></i>
+                            Tên sẽ được hiển thị khi gọi số thứ tự
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Queue Info -->
+            <div class="form-card" id="queueInfo" style="display: none;">
+                <h4 class="mb-3">
+                    <i class="bi bi-clock text-warning"></i> 
+                    Thông tin hàng đợi
+                </h4>
+                
+                <div class="queue-info">
+                    <div class="queue-number" id="currentQueue">0</div>
+                    <p class="mb-0">Số thứ tự hiện tại</p>
+                </div>
+                
+                <div class="row g-3 text-center">
+                    <div class="col-4">
+                        <div class="text-primary fw-bold fs-4" id="waitingCount">-</div>
+                        <small class="text-muted">Đang chờ</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-success fw-bold fs-4" id="avgWaitTime">-</div>
+                        <small class="text-muted">Phút/người</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="text-info fw-bold fs-4" id="estimatedTime">-</div>
+                        <small class="text-muted">Dự kiến (phút)</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage">
+                <i class="bi bi-exclamation-triangle"></i>
+                <span id="errorText"></span>
+            </div>
+            
+            <!-- Take Number Button -->
+            <div class="text-center">
+                <button class="btn-take-number" id="btnTakeNumber" disabled>
+                    <i class="bi bi-plus-circle"></i>
+                    Lấy số thứ tự
+                </button>
+            </div>
+            
+            <!-- Ticket Result -->
+            <div class="ticket-result" id="ticketResult">
+                <h3 class="text-success mb-3">
+                    <i class="bi bi-check-circle"></i>
+                    Lấy số thành công!
+                </h3>
+                
+                <div class="ticket-number" id="ticketNumber">A001</div>
+                
+                <h5 class="mb-3" id="ticketDepartment">Khoa Nội Tổng Hợp</h5>
+                
+                <div class="waiting-status pulse">
+                    <i class="bi bi-hourglass-split"></i>
+                    Vui lòng chờ được gọi
+                </div>
+                
+                <div class="row g-3 mt-3">
+                    <div class="col-6">
+                        <small class="text-muted">Thời gian lấy</small>
+                        <div class="fw-bold" id="ticketTime">--:--</div>
+                    </div>
+                    <div class="col-6">
+                        <small class="text-muted">Vị trí chờ</small>
+                        <div class="fw-bold" id="queuePosition">-</div>
+                    </div>
+                </div>
+                
+                <!-- Đồng hồ đếm thời gian chờ -->
+                <div class="mt-3 p-3 bg-light rounded">
+                    <div class="text-center">
+                        <small class="text-muted d-block mb-2">Thời gian chờ</small>
+                        <div class="fw-bold fs-5 text-primary" id="waitingTimer">
+                            <i class="bi bi-clock me-2"></i>00:00:00
+                        </div>
+                        <small class="text-muted">Đã chờ từ lúc lấy số</small>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary mt-3" onclick="location.reload()">
+                    <i class="bi bi-arrow-repeat"></i>
+                    Lấy số mới
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notifications -->
+    <div class="notification-toast" id="notificationToast">
+        <!-- Toasts will appear here -->
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="assets/app-user-responsive.js"></script>
+</body>
+</html>
